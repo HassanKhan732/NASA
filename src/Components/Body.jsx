@@ -1,89 +1,86 @@
-// import React from "react";
 
-// const Body = () => {
-//   const articles = [
-//     { id: 1, title: "Exploring Mars: NASA’s New Mission", desc: "Discover how NASA is preparing for the next journey to the Red Planet." },
-//     { id: 2, title: "Black Holes: Mysteries of Space", desc: "A deep dive into the science behind black holes and their impact on the universe." },
-//     { id: 3, title: "The Future of Space Travel", desc: "Will humans colonize Mars or explore beyond the solar system?" },
-//   ];
-
-//   return (
-//     <div className="space-y-6">
-//       {articles.map((article) => (
-//         <div
-//           key={article.id}
-//           className="bg-white shadow-md p-5 rounded-xl hover:shadow-xl transition cursor-pointer"
-//         >
-//           <h2 className="text-xl font-semibold text-gray-800">{article.title}</h2>
-//           <p className="text-gray-600 mt-2">{article.desc}</p>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default Body;
-
-
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-// import "../styles/Body.css";
+
+const articlesData = [
+  { id: 1, category: "Plants", title: "The Secret Life of Plants", content: "Exploring how plants communicate and survive." },
+  { id: 2, category: "Plants", title: "Medicinal Plants", content: "How plants are used in medicine across cultures." },
+  { id: 3, category: "Sun", title: "The Power of the Sun", content: "The importance of solar energy for Earth." },
+  { id: 4, category: "Sun", title: "Solar Storms", content: "Understanding the effects of solar flares." },
+  { id: 5, category: "Moon", title: "Mysteries of the Moon", content: "How the moon affects tides and human life." },
+  { id: 6, category: "Moon", title: "Moon Missions", content: "The story of Apollo and future lunar missions." },
+  { id: 7, category: "Stars", title: "Birth of Stars", content: "The science behind how stars are formed." },
+  { id: 8, category: "Stars", title: "Supernovas", content: "Explosive deaths of massive stars." },
+  { id: 9, category: "Earth", title: "Earth’s Ecosystem", content: "How all life on Earth is interconnected." },
+  { id: 10, category: "Earth", title: "Climate Change", content: "The challenges of global warming." },
+];
+
+const categories = ["All", "Plants", "Sun", "Moon", "Stars", "Earth"];
 
 const Body = () => {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredArticles = articlesData.filter((article) => {
+    const matchesCategory =
+      selectedCategory === "All" || article.category === selectedCategory;
+    const matchesSearch = article.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   return (
-    <section className="hero">
-      {/* Background Video */}
-      <video
-        className="hero-video"
-        autoPlay
-        loop
-        muted
-        playsInline
-      >
-        <source src="https://sxcontent9668.azureedge.us/cms-assets/assets/Mobile_v4_HB_e1d2eda88f.mp4" type="video/mp4" />
-      </video>
+    <div className="body-container">
+      <h1 className="main-heading">Space Insights Articles</h1>
 
-      {/* Dark Overlay */}
-      <div className="overlay"></div>
+      {/* Category Buttons */}
+      <div className="categories">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`category-btn ${
+              selectedCategory === cat ? "active" : ""
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
 
-      {/* Animated Content */}
-      <motion.div
-        className="hero-content"
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      >
-        <motion.h1
-          className="hero-heading"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-        >
-          Space Exploration 🚀
-        </motion.h1>
+      {/* Search Bar */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search articles..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-        <motion.p
-          className="hero-excerpt"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.3 }}
-        >
-          Humanity’s greatest adventure begins beyond the sky. Explore the
-          unknown, chase the stars, and discover the future of space travel...
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5 }}
-        >
-          <Link to="/article" className="hero-button">
-            Read More
-          </Link>
-        </motion.div>
-      </motion.div>
-    </section>
+      {/* Articles */}
+      <div className="articles-grid">
+        {filteredArticles.length > 0 ? (
+          filteredArticles.map((article) => (
+            <div key={article.id} className="article-card">
+              <h2 className="article-title">{article.title}</h2>
+              <p className="article-content">
+                {article.content.substring(0, 80)}...
+              </p>
+              <span className="article-category">
+                Category: {article.category}
+              </span>
+              <Link to={`/article/${article.id}`} className="read-more">
+                Read More
+              </Link>
+            </div>
+          ))
+        ) : (
+          <p className="no-results">No articles found.</p>
+        )}
+      </div>
+    </div>
   );
 };
 
